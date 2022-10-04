@@ -2,10 +2,12 @@
 
 # local, dev, production 공통
 server:
-  port: 8080
+  port: 8081
 
 # 실행할 환경 지정 spring:profiles:active 옵션
 spring:
+  profiles:
+    active: dev
 
   # Redis
   redis:
@@ -18,3 +20,4 @@ spring:
     store-type: redis
     redis:
       flush-mode: on_save
+
