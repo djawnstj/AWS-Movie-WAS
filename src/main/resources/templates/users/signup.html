@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"/>
+<style>
+    .fieldError {
+        border-color: #bd2130;
+    }
+</style>
+<body>
+
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+
+    <form role="form" action="/users/new" th:object="${userForm}" method="post">
+        <div class="form-outline">
+            <input type="text" th:field="*{userName}" class="form-control"
+                   th:class="${#fields.hasErrors('userName')}? 'form-control fieldError' : 'form-control'">
+            <label class="form-label" th:for="userName">이름</label>
+            <p th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}">Incorrect date</p>
+        </div>
+        <div class="form-outline">
+            <input type="text" th:field="*{userId}" class="form-control"
+                   th:class="${#fields.hasErrors('userId')}? 'form-control fieldError' : 'form-control'">
+            <label class="form-label" th:for="userId">ID</label>
+            <p th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}">Incorrect date</p>
+        </div>
+        <div class="form-outline">
+            <input type="text" th:field="*{userPw}" class="form-control"
+                   th:class="${#fields.hasErrors('userPw')}? 'form-control fieldError' : 'form-control'">
+            <label class="form-label" th:for="userPw">PW</label>
+            <p th:if="${#fields.hasErrors('userPw')}" th:errors="*{userPw}">Incorrect date</p>
+        </div>
+        <button type="submit" class="btn btn-info">회원 가입</button>
+    </form>
+    <br/>
+    <div th:replace="fragments/footer :: footer"/>
+
+    <!-- MDB -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js"></script>
+</div> <!-- /container -->
+
+</body>
+</html>
