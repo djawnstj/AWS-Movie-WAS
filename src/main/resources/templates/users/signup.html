@@ -3,9 +3,6 @@
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header"/>
 <style>
-    .fieldError {
-        border-color: #bd2130;
-    }
 </style>
 <body>
 
@@ -14,22 +11,19 @@
 
     <form role="form" action="/users/new" th:object="${userForm}" method="post">
         <div class="form-outline">
-            <input type="text" th:field="*{userName}" class="form-control"
-                   th:class="${#fields.hasErrors('userName')}? 'form-control fieldError' : 'form-control'">
-            <label class="form-label" th:for="userName">이름</label>
-            <p th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}">Incorrect date</p>
+            <input type="text" th:field="*{userName}" class="form-control" />
+            <label th:if="${not #fields.hasErrors('userName')}" class="form-label" th:for="userName">이름</label>
+            <label th:if="${#fields.hasErrors('userName')}" class="form-label" th:for="userName" style="color: #bd2130 !important;'" th:errors="*{userName}">이름</label>
         </div>
         <div class="form-outline">
-            <input type="text" th:field="*{userId}" class="form-control"
-                   th:class="${#fields.hasErrors('userId')}? 'form-control fieldError' : 'form-control'">
-            <label class="form-label" th:for="userId">ID</label>
-            <p th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}">Incorrect date</p>
+            <input type="text" th:field="*{userId}" class="form-control" />
+            <label th:if="${not #fields.hasErrors('userId')}" class="form-label" th:for="userId">ID</label>
+            <label th:if="${#fields.hasErrors('userId')}" class="form-label" th:for="userId" style="color: #bd2130 !important;'" th:errors="*{userId}">ID</label>
         </div>
         <div class="form-outline">
-            <input type="text" th:field="*{userPw}" class="form-control"
-                   th:class="${#fields.hasErrors('userPw')}? 'form-control fieldError' : 'form-control'">
-            <label class="form-label" th:for="userPw">PW</label>
-            <p th:if="${#fields.hasErrors('userPw')}" th:errors="*{userPw}">Incorrect date</p>
+            <input type="text" th:field="*{userPw}" class="form-control" />
+            <label th:if="${not #fields.hasErrors('userPw')}" class="form-label" th:for="userPw">PW</label>
+            <label th:if="${#fields.hasErrors('userPw')}" class="form-label" th:for="userPw" style="color: #bd2130 !important;'" th:errors="*{userPw}">PW</label>
         </div>
         <button type="submit" class="btn btn-info">회원 가입</button>
     </form>
