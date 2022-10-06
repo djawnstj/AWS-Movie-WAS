@@ -24,6 +24,12 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    // WebClient 의존성 주입
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+    // MacOS Spring Cloud Gateway 에러 관련 의존성 주입
+    implementation("io.netty:netty-resolver-dns-native-macos:4.1.82.Final:osx-aarch_64")
 }
 
 tasks.withType<KotlinCompile> {
