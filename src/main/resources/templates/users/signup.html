@@ -21,8 +21,8 @@
             <label th:if="${#fields.hasErrors('userId')}" class="form-label" th:for="userId" style="color: #bd2130 !important;'" th:errors="*{userId}">ID</label>
         </div>
         <div class="form-outline">
-            <input type="text" th:field="*{userPw}" class="form-control" />
-            <label th:if="${not #fields.hasErrors('userPw')}" class="form-label" th:for="userPw">PW</label>
+            <input type="password" th:field="*{userPw}" class="form-control" />
+            <label th:if="${not #fields.hasErrors('userPw')}" class="form-label" th:for="userPw" th:value="*{userPw}">PW</label>
             <label th:if="${#fields.hasErrors('userPw')}" class="form-label" th:for="userPw" style="color: #bd2130 !important;'" th:errors="*{userPw}">PW</label>
         </div>
         <button type="submit" class="btn btn-info">회원 가입</button>
