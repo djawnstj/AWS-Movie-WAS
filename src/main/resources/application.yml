@@ -21,3 +21,24 @@ spring:
     redis:
       flush-mode: on_save
 
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  apiServer:
+    protocol: http
+    host: 127.0.0.1
+    port: 8080
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  apiServer:
+    protocol: http
+    host: 43.200.41.75
+    port: 8080
