@@ -1,4 +1,4 @@
-package com.awsmovie.form
+package com.awsmovie.form.user
 
 import javax.validation.constraints.NotEmpty
 
