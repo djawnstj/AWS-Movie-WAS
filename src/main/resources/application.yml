@@ -9,6 +9,12 @@ spring:
   profiles:
     active: dev
 
+  # 파일 업로드 설정
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
   # Redis
   redis:
     host: 127.0.0.1
