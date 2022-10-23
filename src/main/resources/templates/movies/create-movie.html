@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"/>
+<style>
+</style>
+<body>
+
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+
+    <form role="form" action="/movies/new" th:object="${movieForm}" method="post" enctype="multipart/form-data">
+        <div class="form-outline">
+            <input type="text" th:field="*{movieName}" class="form-control" />
+            <label th:if="${not #fields.hasErrors('movieName')}" class="form-label" th:for="movieName">영화 이름</label>
+            <label th:if="${#fields.hasErrors('movieName')}" class="form-label" th:for="userName" style="color: #bd2130 !important;'" th:errors="*{movieName}">영화 이름</label>
+        </div>
+        <div class="form-outline">
+            <input type="text" th:field="*{runTime}" class="form-control" />
+            <label th:if="${not #fields.hasErrors('runTime')}" class="form-label" th:for="runTime">상영 시간</label>
+            <label th:if="${#fields.hasErrors('runTime')}" class="form-label" th:for="runTime" style="color: #bd2130 !important;'" th:errors="*{runTime}">상영 시간</label>
+        </div>
+
+        <div class="form-outline">
+            <input type="text" th:field="*{openingDate}" class="form-control" />
+            <label th:if="${not #fields.hasErrors('openingDate')}" class="form-label" th:for="openingDate" th:value="*{openingDate}">개봉일</label>
+            <label th:if="${#fields.hasErrors('openingDate')}" class="form-label" th:for="openingDate" style="color: #bd2130 !important;'" th:errors="*{openingDate}">개봉일</label>
+        </div>
+
+        <div class="form-outline">
+            <input type="text" th:field="*{summary}" class="form-control" />
+            <label th:if="${not #fields.hasErrors('summary')}" class="form-label" th:for="summary" th:value="*{summary}">내용</label>
+            <label th:if="${#fields.hasErrors('summary')}" class="form-label" th:for="summary" style="color: #bd2130 !important;'" th:errors="*{summary}">내용</label>
+        </div>
+
+        <div th:each="genre : ${genres}" class="form-check form-check-inline">
+            <input type="checkbox" th:field="*{genres}" th:value="${genre.key}" class="form-check-input">
+            <label th:for="${#ids.prev('genres')}"
+                   th:text="${genre.value}" class="form-check-label">장르</label>
+        </div>
+
+        <div class="form-outline">
+            <input type="file" th:field="*{movieImage}" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-info">영화 등록</button>
+
+    </form>
+
+    <br/>
+    <div th:replace="fragments/footer :: footer"/>
+
+    <!-- MDB -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js"></script>
+</div> <!-- /container -->
+
+<script>
+
+    const getGenreList = async () => {
+
+        try {
+            const result = await axios.get("http://localhost:8080/aws-movie-api/v1/genres")
+            console.log(result)
+        } catch (e) {
+            console.log("err:")
+            console.log(e)
+        }
+    }
+
+    window.onload = getGenreList()
+
+</script>
+
+</body>
+</html>
