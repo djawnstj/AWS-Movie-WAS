@@ -33,7 +33,7 @@
             <label th:if="${#fields.hasErrors('summary')}" class="form-label" th:for="summary" style="color: #bd2130 !important;'" th:errors="*{summary}">내용</label>
         </div>
 
-        <div th:each="genre : ${genres}" class="form-check form-check-inline">
+        <div th:field="genres" th:each="genre : ${genres}" class="form-check form-check-inline">
             <input type="checkbox" th:field="*{genres}" th:value="${genre.key}" class="form-check-input">
             <label th:for="${#ids.prev('genres')}"
                    th:text="${genre.value}" class="form-check-label">장르</label>
@@ -56,14 +56,42 @@
 
 <script>
 
+    const genreContainer = document.querySelector("#genres");
+
+    const createGenreCheckBox = (key, value) => {
+
+        const parent = document.createElement("div");
+
+        parent
+
+        const checkBox = document.createElement("input");
+        checkBox.type = "checkBox";
+        checkBox.name = "genre";
+        checkBox.id = "genre"
+
+
+    }
+
     const getGenreList = async () => {
 
         try {
-            const result = await axios.get("http://localhost:8080/aws-movie-api/v1/genres")
-            console.log(result)
+            const result = await axios.get("http://localhost:8080/aws-movie-api/v1/genres");
+
+            if (result.status !== 200) {
+                alert("장르 조회에 실패했습니다.");
+                return;
+            }
+
+            const genreList = result.data.result;
+
+            genreList.forEach((genre, index) => {
+                document.createElement("div");
+            });
+
+            console.log(genreList)
+
         } catch (e) {
-            console.log("err:")
-            console.log(e)
+            alert("장르 조회에 실패했습니다.");
         }
     }
 
