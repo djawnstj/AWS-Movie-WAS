@@ -9,38 +9,34 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 
-    <form role="form" action="/movies/new" th:object="${movieForm}" method="post" enctype="multipart/form-data">
+    <form role="form" id="createMovieForm" th:object="${movieForm}" method="post" enctype="multipart/form-data">
         <div class="form-outline">
-            <input type="text" th:field="*{movieName}" class="form-control" />
+            <input type="text" id="movieName" th:field="*{movieName}" class="form-control" />
             <label th:if="${not #fields.hasErrors('movieName')}" class="form-label" th:for="movieName">영화 이름</label>
             <label th:if="${#fields.hasErrors('movieName')}" class="form-label" th:for="userName" style="color: #bd2130 !important;'" th:errors="*{movieName}">영화 이름</label>
         </div>
         <div class="form-outline">
-            <input type="text" th:field="*{runTime}" class="form-control" />
+            <input type="text" id="runTime" th:field="*{runTime}" class="form-control" />
             <label th:if="${not #fields.hasErrors('runTime')}" class="form-label" th:for="runTime">상영 시간</label>
             <label th:if="${#fields.hasErrors('runTime')}" class="form-label" th:for="runTime" style="color: #bd2130 !important;'" th:errors="*{runTime}">상영 시간</label>
         </div>
 
         <div class="form-outline">
-            <input type="text" th:field="*{openingDate}" class="form-control" />
+            <input type="date" id="openingDate" th:field="*{openingDate}" class="form-control" />
             <label th:if="${not #fields.hasErrors('openingDate')}" class="form-label" th:for="openingDate" th:value="*{openingDate}">개봉일</label>
             <label th:if="${#fields.hasErrors('openingDate')}" class="form-label" th:for="openingDate" style="color: #bd2130 !important;'" th:errors="*{openingDate}">개봉일</label>
         </div>
 
         <div class="form-outline">
-            <input type="text" th:field="*{summary}" class="form-control" />
+            <input type="text" id="summary" th:field="*{summary}" class="form-control" />
             <label th:if="${not #fields.hasErrors('summary')}" class="form-label" th:for="summary" th:value="*{summary}">내용</label>
             <label th:if="${#fields.hasErrors('summary')}" class="form-label" th:for="summary" style="color: #bd2130 !important;'" th:errors="*{summary}">내용</label>
         </div>
 
-        <div th:field="genres" th:each="genre : ${genres}" class="form-check form-check-inline">
-            <input type="checkbox" th:field="*{genres}" th:value="${genre.key}" class="form-check-input">
-            <label th:for="${#ids.prev('genres')}"
-                   th:text="${genre.value}" class="form-check-label">장르</label>
-        </div>
+        <div id="genres"></div>
 
         <div class="form-outline">
-            <input type="file" th:field="*{movieImage}" class="form-control" />
+            <input type="file" id="movieImage" th:field="*{movieImage}" class="form-control" />
         </div>
 
         <button type="submit" class="btn btn-info">영화 등록</button>
@@ -54,22 +50,44 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js"></script>
 </div> <!-- /container -->
 
-<script>
+<script type="module">
 
+    import Common from "/js/common.js";
+
+    const createMovieForm = document.querySelector("#createMovieForm");
+    const movieNameInput = document.querySelector("#movieName");
+    const runTimeInput = document.querySelector("#runTime");
+    const openingDateInput = document.querySelector("#openingDate");
+    const summaryInput = document.querySelector("#summary");
     const genreContainer = document.querySelector("#genres");
+    const movieImageInput = document.querySelector("#movieImage");
 
-    const createGenreCheckBox = (key, value) => {
+    const checkedGenreCode = [];
+
+    const createGenreCheckBox = (code, name) => {
 
         const parent = document.createElement("div");
 
-        parent
+        parent.className = "form-check form-check-inline";
 
         const checkBox = document.createElement("input");
         checkBox.type = "checkBox";
-        checkBox.name = "genre";
-        checkBox.id = "genre"
+        checkBox.id = `genre_${code}`;
+        checkBox.value = code;
+        checkBox.addEventListener("change", (event) => {
+            if (event.target.checked) checkedGenreCode.push(event.target.value);
+            else checkedGenreCode.pop(event.target.value);
+        });
 
+        const label = document.createElement("label");
+        label.htmlFor = checkBox.id;
+        label.innerText = name;
+        label.className = "form-check-label";
 
+        parent.appendChild(checkBox);
+        parent.appendChild(label);
+
+        return parent;
     }
 
     const getGenreList = async () => {
@@ -85,7 +103,8 @@
             const genreList = result.data.result;
 
             genreList.forEach((genre, index) => {
-                document.createElement("div");
+                let genreCheckBox = createGenreCheckBox(genre.genreCode, genre.genreKrName);
+                genreContainer.appendChild(genreCheckBox);
             });
 
             console.log(genreList)
@@ -96,6 +115,34 @@
     }
 
     window.onload = getGenreList()
+
+    const postNewMovie = async () => {
+        try {
+            const movieName = movieNameInput.value;
+            const runTime = runTimeInput.value;
+            const openingDate = openingDateInput.value;
+            const summary = summaryInput.value;
+            const movieImage = movieImageInput.value;
+
+
+            axios.post(`${Common.baseUrl}/movies`, {
+                movieName: movieName,
+                runTime: runTime,
+                openingDate: openingDate,
+                summary: summary,
+                genres: checkedGenreCode,
+                image: movieImage
+            });
+
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    createMovieForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        postNewMovie();
+    })
 
 </script>
 
