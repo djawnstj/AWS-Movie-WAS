@@ -9,7 +9,8 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 
-    <form role="form" id="createMovieForm" th:object="${movieForm}" method="post" enctype="multipart/form-data">
+<!--    <form role="form" id="createMovieForm" th:object="${movieForm}" method="post" enctype="multipart/form-data">-->
+    <form role="form" action="/movies/new" th:object="${movieForm}" method="post" enctype="multipart/form-data">
         <div class="form-outline">
             <input type="text" id="movieName" th:field="*{movieName}" class="form-control" />
             <label th:if="${not #fields.hasErrors('movieName')}" class="form-label" th:for="movieName">영화 이름</label>
@@ -33,7 +34,11 @@
             <label th:if="${#fields.hasErrors('summary')}" class="form-label" th:for="summary" style="color: #bd2130 !important;'" th:errors="*{summary}">내용</label>
         </div>
 
-        <div id="genres"></div>
+        <div th:each="genre : ${genres}" class="form-check form-check-inline">
+            <input type="checkbox" th:field="*{genres}" th:value="${genre.key}" class="form-check-input">
+            <label th:for="${#ids.prev('genres')}"
+                   th:text="${genre.value}" class="form-check-label">장르</label>
+        </div>
 
         <div class="form-outline">
             <input type="file" id="movieImage" th:field="*{movieImage}" class="form-control" />
@@ -49,102 +54,6 @@
     <!-- MDB -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js"></script>
 </div> <!-- /container -->
-
-<script type="module">
-
-    import Common from "/js/common.js";
-
-    const createMovieForm = document.querySelector("#createMovieForm");
-    const movieNameInput = document.querySelector("#movieName");
-    const runTimeInput = document.querySelector("#runTime");
-    const openingDateInput = document.querySelector("#openingDate");
-    const summaryInput = document.querySelector("#summary");
-    const genreContainer = document.querySelector("#genres");
-    const movieImageInput = document.querySelector("#movieImage");
-
-    const checkedGenreCode = [];
-
-    const createGenreCheckBox = (code, name) => {
-
-        const parent = document.createElement("div");
-
-        parent.className = "form-check form-check-inline";
-
-        const checkBox = document.createElement("input");
-        checkBox.type = "checkBox";
-        checkBox.id = `genre_${code}`;
-        checkBox.value = code;
-        checkBox.addEventListener("change", (event) => {
-            if (event.target.checked) checkedGenreCode.push(event.target.value);
-            else checkedGenreCode.pop(event.target.value);
-        });
-
-        const label = document.createElement("label");
-        label.htmlFor = checkBox.id;
-        label.innerText = name;
-        label.className = "form-check-label";
-
-        parent.appendChild(checkBox);
-        parent.appendChild(label);
-
-        return parent;
-    }
-
-    const getGenreList = async () => {
-
-        try {
-            const result = await axios.get("http://localhost:8080/aws-movie-api/v1/genres");
-
-            if (result.status !== 200) {
-                alert("장르 조회에 실패했습니다.");
-                return;
-            }
-
-            const genreList = result.data.result;
-
-            genreList.forEach((genre, index) => {
-                let genreCheckBox = createGenreCheckBox(genre.genreCode, genre.genreKrName);
-                genreContainer.appendChild(genreCheckBox);
-            });
-
-            console.log(genreList)
-
-        } catch (e) {
-            alert("장르 조회에 실패했습니다.");
-        }
-    }
-
-    window.onload = getGenreList()
-
-    const postNewMovie = async () => {
-        try {
-            const movieName = movieNameInput.value;
-            const runTime = runTimeInput.value;
-            const openingDate = openingDateInput.value;
-            const summary = summaryInput.value;
-            const movieImage = movieImageInput.value;
-
-
-            axios.post(`${Common.baseUrl}/movies`, {
-                movieName: movieName,
-                runTime: runTime,
-                openingDate: openingDate,
-                summary: summary,
-                genres: checkedGenreCode,
-                image: movieImage
-            });
-
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
-    createMovieForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        postNewMovie();
-    })
-
-</script>
 
 </body>
 </html>
