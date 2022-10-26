@@ -89,19 +89,13 @@ class MovieController @Autowired constructor(
     @GetMapping("/movies")
     fun movies(model: Model): String {
 
-        val movies = ArrayList<MovieDto>()
-
         val response = webClient.get()
             .uri("/movies")
             .retrieve()
             .bodyToFlux(MovieResponse::class.java)
             .blockFirst()
 
-        response?.result?.let { movies.addAll(it)
-        println(it.toString())
-        }
-
-        model.addAttribute("movies", movies)
+        response?.result?.let { model.addAttribute("movies", it) }
 
         return "movies/movies"
 
