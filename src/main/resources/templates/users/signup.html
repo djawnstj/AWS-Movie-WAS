@@ -9,7 +9,7 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 
-    <form role="form" action="/users/new" th:object="${userForm}" method="post">
+    <form role="form" action="/signup" th:object="${userForm}" method="post">
         <div class="form-outline">
             <input type="text" th:field="*{userName}" class="form-control" />
             <label th:if="${not #fields.hasErrors('userName')}" class="form-label" th:for="userName">이름</label>
