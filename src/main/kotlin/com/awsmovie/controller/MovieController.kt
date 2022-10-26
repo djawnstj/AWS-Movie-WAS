@@ -2,6 +2,7 @@ package com.awsmovie.controller
 
 import com.awsmovie.controller.response.BaseResponse
 import com.awsmovie.controller.response.GenreResponse
+import com.awsmovie.controller.response.MovieResponse
 import com.awsmovie.dto.movie.MovieDto
 import com.awsmovie.form.movie.MovieForm
 import com.awsmovie.util.DateUtil
@@ -66,7 +67,7 @@ class MovieController @Autowired constructor(
                 summary = summary,
             ))
             genres.forEach {
-                builder.part("genreCode", it)
+                builder.part("genreCode", it.toString())
                     .contentType(MediaType.APPLICATION_JSON)
             }
             movieImage?.let {
@@ -82,9 +83,28 @@ class MovieController @Autowired constructor(
             .bodyToFlux(BaseResponse::class.java)
             .blockFirst()
 
-        response?.let { println(it) }
-
         return "redirect:/"
+    }
+
+    @GetMapping("/movies")
+    fun movies(model: Model): String {
+
+        val movies = ArrayList<MovieDto>()
+
+        val response = webClient.get()
+            .uri("/movies")
+            .retrieve()
+            .bodyToFlux(MovieResponse::class.java)
+            .blockFirst()
+
+        response?.result?.let { movies.addAll(it)
+        println(it.toString())
+        }
+
+        model.addAttribute("movies", movies)
+
+        return "movies/movies"
+
     }
 
 }
