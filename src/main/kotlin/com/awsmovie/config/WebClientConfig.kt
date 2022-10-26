@@ -25,6 +25,9 @@ class WebClientConfig {
     @Value("\${spring.apiServer.port}")
     private val port: String? = null
 
+    @Value("\${spring.apiServer.baseUri}")
+    private val baseUri: String? = null
+
     private fun httpClient(): HttpClient = HttpClient.create()
         .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
         .responseTimeout(Duration.ofMillis(5000))
@@ -35,10 +38,10 @@ class WebClientConfig {
 
     @Bean
     fun webClient(): WebClient = WebClient.builder()
-            .baseUrl("$protocol://$host:$port")
+            .baseUrl("$protocol://$host:$port$baseUri")
 //            .defaultCookie("cookieKey", "cookieValue")
 //            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .defaultUriVariables(Collections.singletonMap("url", "$protocol://$host:$port"))
+            .defaultUriVariables(Collections.singletonMap("url", "$protocol://$host:$port$baseUri"))
             .clientConnector(ReactorClientHttpConnector(httpClient()))
             .build()
 

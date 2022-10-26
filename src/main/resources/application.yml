@@ -37,6 +37,7 @@ spring:
     protocol: http
     host: 127.0.0.1
     port: 8080
+    baseUri: /aws-movie-api/v1
 
 ---
 spring:
@@ -48,3 +49,4 @@ spring:
     protocol: http
     host: 43.200.41.75
     port: 8080
+    baseUri: /aws-movie-api/v1
