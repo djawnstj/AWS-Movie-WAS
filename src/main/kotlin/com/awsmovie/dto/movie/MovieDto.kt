@@ -4,6 +4,7 @@ import com.awsmovie.dto.movie.genre.GenreDto
 import java.time.LocalDateTime
 
 data class MovieDto(
+    val movieId: Long? = null,
     val movieName: String,
     val runTime: Int,
     val openingDate: LocalDateTime,
