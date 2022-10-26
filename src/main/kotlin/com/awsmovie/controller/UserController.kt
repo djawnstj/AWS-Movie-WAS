@@ -1,5 +1,6 @@
 package com.awsmovie.controller
 
+import com.awsmovie.controller.response.BaseResponse
 import com.awsmovie.form.user.LoginForm
 import com.awsmovie.form.user.UserForm
 import com.awsmovie.util.ParamBuilder
@@ -39,7 +40,7 @@ class UserController @Autowired constructor(
         params.add("userPw", form.userPw)
 
         val bodyToMono = webClient.get()
-            .uri(ParamBuilder.createUri("aws-movie-api/v1/users", params))
+            .uri(ParamBuilder.createUri("/users", params))
             .retrieve()
             .bodyToMono(String::class.java)
             .subscribe { println(it) }
@@ -53,20 +54,25 @@ class UserController @Autowired constructor(
         return "users/signup"
     }
 
-    @PostMapping("/users/new")
+    @PostMapping("/signup")
     fun create(@Valid form: UserForm, result: BindingResult): String {
         if (result.hasErrors()) {
             return "users/signup"
         }
 
-        val bodyToMono = webClient.post()
-            .uri("aws-movie-api/v1/users")
+        val response = webClient.post()
+            .uri("/users")
             .body(Mono.just(form), UserForm::class.java)
             .retrieve()
-            .bodyToMono(String::class.java)
-            .subscribe {  }
+            .bodyToFlux(BaseResponse::class.java)
+            .blockFirst()
 
-        return "redirect:/"
+        response.let {
+            println(it?.code)
+
+            return "redirect:/"
+        }
+
     }
 
 }
