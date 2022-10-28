@@ -14,6 +14,7 @@ import org.springframework.ui.Model
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
@@ -99,6 +100,22 @@ class MovieController @Autowired constructor(
 
         return "movies/movies"
 
+    }
+
+    @GetMapping("/movies/{id}")
+    fun movieDetail(@PathVariable("id") movieId: Long, model: Model): String {
+
+        val response = webClient.get()
+            .uri("/movies/$movieId")
+            .retrieve()
+            .bodyToFlux(MovieResponse::class.java)
+            .blockFirst()
+
+        response?.apply {
+            if (count >= 1) model.addAttribute("movie", result[0])
+        }
+
+        return "movies/movie-detail"
     }
 
 }
