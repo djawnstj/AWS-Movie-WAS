@@ -30,6 +30,10 @@ dependencies {
 
     // MacOS Spring Cloud Gateway 에러 관련 의존성 주입
     implementation("io.netty:netty-resolver-dns-native-macos:4.1.82.Final:osx-aarch_64")
+
+    // 레디스
+    implementation("org.springframework.boot:spring-boot-starter-data-redis:2.7.3")
+    implementation("org.springframework.session:spring-session-data-redis:2.7.0")
 }
 
 tasks.withType<KotlinCompile> {
