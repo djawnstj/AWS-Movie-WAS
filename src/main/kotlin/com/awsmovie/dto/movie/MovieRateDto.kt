@@ -4,6 +4,7 @@ import com.awsmovie.dto.user.UserDto
 
 data class MovieRateDto(
     val user: UserDto,
-    val rate: Int,
+    val movieId: Long,
+    val rate: Double,
     val comment: String
 )
