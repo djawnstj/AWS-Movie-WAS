@@ -1,7 +1,10 @@
 package com.awsmovie.controller
 
 import com.awsmovie.controller.response.BaseResponse
+import com.awsmovie.dto.movie.MovieRateDto
+import com.awsmovie.dto.user.UserDto
 import com.awsmovie.form.movie.MovieRateForm
+import com.awsmovie.util.StringUtil.isNumeric
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession
 import org.springframework.stereotype.Controller
@@ -19,21 +22,27 @@ class MovieRateController @Autowired constructor(
     @PostMapping("/movie-rates")
     fun createRate(movieRate: MovieRateForm, session: HttpSession): String {
 
-        val userId = session.getAttribute("userId")
+        val uid = session.getAttribute("uid").toString()
 
-        println(userId)
+        check (uid.isNumeric()) { throw IllegalStateException("세션 정보가 잘못되었습니다.") }
 
+        movieRate.apply {
+            val movieRateDto = MovieRateDto(
+                UserDto(uid.toLong(), "", "", ""),
+                movieRate.movieId,
+                rate.toDouble()/2,
+                comment
+            )
 
-        val response = webClient.post()
-            .uri("/movie-rates")
-            .body(Mono.just(movieRate), MovieRateForm::class.java)
-            .retrieve()
-            .bodyToFlux(BaseResponse::class.java)
-            .blockFirst()
+            val response = webClient.post()
+                .uri("/movie-rates")
+                .body(Mono.just(movieRateDto), MovieRateForm::class.java)
+                .retrieve()
+                .bodyToFlux(BaseResponse::class.java)
+                .blockFirst()
 
-        println(response)
-
-        return "redirect:/"
+            return "redirect:/"
+        }
     }
 
 }
