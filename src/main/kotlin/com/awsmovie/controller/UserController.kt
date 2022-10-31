@@ -1,6 +1,7 @@
 package com.awsmovie.controller
 
 import com.awsmovie.controller.response.BaseResponse
+import com.awsmovie.controller.response.UserResponse
 import com.awsmovie.form.user.LoginForm
 import com.awsmovie.form.user.UserForm
 import com.awsmovie.util.ParamBuilder
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import javax.servlet.http.HttpSession
 import javax.validation.Valid
 
 @Controller
@@ -29,7 +31,8 @@ class UserController @Autowired constructor(
     }
 
     @GetMapping("/users")
-    fun login(@Valid form: LoginForm, errors: Errors): String {
+    fun login(@Valid form: LoginForm, errors: Errors, session: HttpSession): String {
+
         if (errors.hasErrors()) {
             return "users/login"
         }
@@ -39,11 +42,15 @@ class UserController @Autowired constructor(
         params.add("userId", form.userId)
         params.add("userPw", form.userPw)
 
-        val bodyToMono = webClient.get()
+        val response = webClient.get()
             .uri(ParamBuilder.createUri("/users", params))
             .retrieve()
-            .bodyToMono(String::class.java)
-            .subscribe { println(it) }
+            .bodyToFlux(UserResponse::class.java)
+            .blockFirst()
+
+        response?.let {
+            if (it.code == 200 && it.count == 1) session.setAttribute("uid", it.result[0].uid ?: -1)
+        }
 
         return "redirect:/"
     }
@@ -55,7 +62,8 @@ class UserController @Autowired constructor(
     }
 
     @PostMapping("/signup")
-    fun create(@Valid form: UserForm, result: BindingResult): String {
+    fun create(@Valid form: UserForm, result: BindingResult, session: HttpSession): String {
+
         if (result.hasErrors()) {
             return "users/signup"
         }
@@ -68,8 +76,6 @@ class UserController @Autowired constructor(
             .blockFirst()
 
         response.let {
-            println(it?.code)
-
             return "redirect:/"
         }
 
