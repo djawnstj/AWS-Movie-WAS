@@ -34,6 +34,8 @@ class MovieRateController @Autowired constructor(
                 comment
             )
 
+            println(movieRateDto)
+
             val response = webClient.post()
                 .uri("/movie-rates")
                 .body(Mono.just(movieRateDto), MovieRateForm::class.java)
@@ -41,7 +43,7 @@ class MovieRateController @Autowired constructor(
                 .bodyToFlux(BaseResponse::class.java)
                 .blockFirst()
 
-            return "redirect:/"
+            return "redirect:/movies/${movieRate.movieId}"
         }
     }
 
