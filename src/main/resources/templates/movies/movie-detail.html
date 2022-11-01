@@ -46,8 +46,10 @@
 
                     <div class="starpoint_wrap">
                         <div class="starpoint_box">
-                            <label th:each="num : ${#numbers.sequence(1,10)}" th:for="'starpoint_' + ${num}" class="label_star" th:title="${num}"><span class="blind" th:text="${num} + '점'">0.5점</span></label>
-                            <input th:each="num : ${#numbers.sequence(1,10)}" th:value="${num}" type="radio" name="rate" th:id="'starpoint_' + ${num}" class="star_radio">
+                            <label th:each="num : ${#numbers.sequence(1,10)}" th:for="'starpoint_' + ${num}"
+                                   class="label_star" th:title="${num}"><span class="blind" th:text="${num} + '점'">0.5점</span></label>
+                            <input th:each="num : ${#numbers.sequence(1,10)}" th:value="${num}" type="radio" name="rate"
+                                   th:id="'starpoint_' + ${num}" class="star_radio">
                             <span class="starpoint_bg"></span>
                         </div>
                     </div>
@@ -59,6 +61,25 @@
                     </div>
 
                 </form>
+                <div th:each="rate : ${movie.rates}">
+                    <div class="starpoint_wrap">
+                        <div class="starpoint_box">
+                            <label th:each="num : ${#numbers.sequence(1,10)}" th:for="${rate.movieRateId} + '_' + ${num}"
+                                   class="label_star" th:title="${num}"><span class="blind" th:text="${num} + '점'">0.5점</span></label>
+                            <input th:each="num : ${#numbers.sequence(1,10)}" th:value="${num}" type="radio"
+                                   th:id="${rate.movieRateId} + '_' + ${num}" class="star_radio" th:checked="${num <= (rate.rate)*2} ? true : false" disabled><!---->
+                            <span class="starpoint_bg"></span>
+                        </div>
+                    </div>
+                    <div class="row g-1">
+                        <div class="col-md-1">
+                            <h6 th:text="${rate.user.userId}"></h6>
+                        </div>
+                        <div class="col-md-9">
+                            <p th:text="${rate.comment}"></p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
