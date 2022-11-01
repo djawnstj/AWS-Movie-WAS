@@ -28,13 +28,12 @@ class MovieRateController @Autowired constructor(
 
         movieRate.apply {
             val movieRateDto = MovieRateDto(
+                null,
                 UserDto(uid.toLong(), "", "", ""),
                 movieRate.movieId,
                 rate.toDouble()/2,
                 comment
             )
-
-            println(movieRateDto)
 
             val response = webClient.post()
                 .uri("/movie-rates")
