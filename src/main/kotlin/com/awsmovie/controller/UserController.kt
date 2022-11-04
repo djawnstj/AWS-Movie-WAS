@@ -1,27 +1,21 @@
 package com.awsmovie.controller
 
-import com.awsmovie.controller.response.BaseResponse
-import com.awsmovie.controller.response.UserResponse
 import com.awsmovie.form.user.LoginForm
 import com.awsmovie.form.user.UserForm
-import com.awsmovie.util.ParamBuilder
+import com.awsmovie.service.user.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
 import org.springframework.validation.BindingResult
 import org.springframework.validation.Errors
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.publisher.Mono
 import javax.servlet.http.HttpSession
 import javax.validation.Valid
 
 @Controller
 class UserController @Autowired constructor(
-    private val webClient: WebClient
+    private val userService: UserService
 ) {
 
     @GetMapping("/login")
@@ -37,16 +31,7 @@ class UserController @Autowired constructor(
             return "users/login"
         }
 
-        val params: MultiValueMap<String, String> = LinkedMultiValueMap()
-
-        params.add("userId", form.userId)
-        params.add("userPw", form.userPw)
-
-        val response = webClient.get()
-            .uri(ParamBuilder.createUri("/users", params))
-            .retrieve()
-            .bodyToFlux(UserResponse::class.java)
-            .blockFirst()
+        val response = userService.callLogin(form)
 
         response?.let {
             if (it.code == 200 && it.count == 1) session.setAttribute("uid", it.result[0].uid ?: -1)
@@ -68,12 +53,7 @@ class UserController @Autowired constructor(
             return "users/signup"
         }
 
-        val response = webClient.post()
-            .uri("/users")
-            .body(Mono.just(form), UserForm::class.java)
-            .retrieve()
-            .bodyToFlux(BaseResponse::class.java)
-            .blockFirst()
+        val response = userService.callSignUp(form)
 
         response.let {
             return "redirect:/"
